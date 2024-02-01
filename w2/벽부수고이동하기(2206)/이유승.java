@@ -4,55 +4,62 @@ import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-class Node {
-	Node(int i, int j, int h, boolean d) {
-		this.i = i;
-		this.j = j;
-		this.h = h;
-		this.d = d;
-	}
-	int i, j, h;
-	boolean d;
-}
-
 public class Main {
+	static class Node {
+		Node(int i, int j, int h, boolean d) {
+			this.i = i;
+			this.j = j;
+			this.h = h;
+			this.d = d;
+		}
+		int i, j, h;
+		boolean d;
+	}
 	static int nrow;
 	static int ncol;
 	static int[] dx = {0, 0, -1, 1};
 	static int[] dy = {-1, 1, 0, 0};
+	// 일반 visited
 	static boolean[][] visited;
+	// 벽을 뚫고 지나갔을경우 dvisited
 	static boolean[][] dvisited;
 	static boolean[][] matrix;
 	
 	public static int solution() {
 		Queue<Node> queue = new ArrayDeque<Node>();
 		queue.add(new Node(0,0,1,false));
-		
 		while(!queue.isEmpty()) {
 			Node curr = queue.poll();
 			if(curr.i == nrow-1 && curr.j == ncol-1)
 				return curr.h;
-			
 			for(int a=0; a<4; a++) {
-				if(outOfCheck(curr.i+dy[a],curr.j+dx[a]))
+				if(outOfCheck(curr.i+dy[a],curr.j+dx[a])) {
+					int x = curr.j+dx[a];
+					int y = curr.i+dy[a];
+					int h = curr.h;
+					// 이전 노드가 벽을 뚫었을 경우
 					if(curr.d) {
-						if(matrix[curr.i+dy[a]][curr.j+dx[a]] && dvisitedCheck(curr.i+dy[a],curr.j+dx[a])) {
-							dvisited[curr.i+dy[a]][curr.j+dx[a]] = true;
-							queue.add(new Node(curr.i+dy[a], curr.j+dx[a], curr.h+1, true));
+						// 길이 있고, 방문하지 않았을 경우
+						if(matrix[y][x] && dvisitedCheck(y,x)) {
+							dvisited[y][x] = true;
+							queue.add(new Node(y, x, h+1, true));
 						}
 					} else {
-						if(matrix[curr.i+dy[a]][curr.j+dx[a]] && visitedCheck(curr.i+dy[a],curr.j+dx[a])) {
-							visited[curr.i+dy[a]][curr.j+dx[a]] = true;
-							queue.add(new Node(curr.i+dy[a], curr.j+dx[a], curr.h+1, false));
+						// 이전 노드가 벽을 뚫지 않았을 경우
+						// 길이 있고, 방문하지 않았을 경우
+						if(matrix[y][x] && visitedCheck(y,x)) {
+							visited[y][x] = true;
+							queue.add(new Node(y, x, h+1, false));
 						} 
-						else if (!matrix[curr.i+dy[a]][curr.j+dx[a]] && dvisitedCheck(curr.i+dy[a],curr.j+dx[a])){
-							dvisited[curr.i+dy[a]][curr.j+dx[a]] = true;
-							queue.add(new Node(curr.i+dy[a], curr.j+dx[a], curr.h+1, true));
+						// 길은 없지만, 방문하지 않았을 경우(dvisited)
+						else if (!matrix[y][x] && dvisitedCheck(y,x)){
+							dvisited[y][x] = true;
+							queue.add(new Node(y, x, h+1, true));
 						}
 					}
+				}
 			}	
 		}
-		
 		return -1;
 	}
 	
