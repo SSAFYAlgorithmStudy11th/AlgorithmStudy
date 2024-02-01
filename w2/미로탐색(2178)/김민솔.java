@@ -1,21 +1,35 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static int N, V;
-	static boolean[] visited;
-	static ArrayList<ArrayList<Integer>> arr;
-	static int res;
+	public static int[][] arr;
+	public static int[][] visited;
+	public static int[] dx = {0,0,1,-1};
+	public static int[] dy = {1,-1,0,0};
+	public static int N,M;
 	
-	static void dfs(int s) {
-		visited[s]= true;
+	public static void bfs(int i, int j) {
+		Queue<int[]> q = new LinkedList<>();
+		visited[i][j]++;
+		q.add(new int[] {i,j});
 		
-		for(int i=0;i<arr.get(s).size();i++) {
-			if(!visited[arr.get(s).get(i)]) {
-				dfs(arr.get(s).get(i));
+		while(!q.isEmpty()) {
+			int[] now = q.poll();
+			
+			for(int d=0;d<4;d++) {
+				int nx = now[0]+dx[d];
+				int ny = now[1]+dy[d];
+				
+				if(nx>=0 &&nx<N && ny>=0 && ny<M && visited[nx][ny]==0 &&arr[nx][ny]==1) {
+					visited[nx][ny] = visited[now[0]][now[1]]+1;
+					q.add(new int[] {nx,ny});
+				}
+				
 			}
 		}
 	}
@@ -25,36 +39,22 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		int N = Integer.parseInt(st.nextToken());
-		int V = Integer.parseInt(st.nextToken());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
 		
-		res =0;
-		visited = new boolean[N+1];
-		arr = new ArrayList<>();
+		arr = new int[N][M];
+		visited = new int[N][M];
 		
-		for(int i =0;i<N+1;i++) {
-			arr.add(new ArrayList<Integer>());
-		}
-		
-		for(int i=0;i<V;i++) {
-			st = new StringTokenizer(br.readLine());
-			int a = Integer.parseInt(st.nextToken());
-			int b = Integer.parseInt(st.nextToken());
-			
-			arr.get(a).add(b);
-			arr.get(b).add(a);
-		}
-		
-		for(int i=1;i<N+1;i++) {
-			if(!visited[i]) {
-				res++;
-				dfs(i);
+		for(int i=0;i<N;i++) {
+			String str = br.readLine();
+			for(int j=0;j<M;j++) {
+				arr[i][j] = str.charAt(j)-'0';
 			}
 		}
 		
-		System.out.println(res);
+		bfs(0,0);
 		
-		
+		System.out.println(visited[N-1][M-1]);
 	}
 
 }
