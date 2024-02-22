@@ -26,10 +26,7 @@ public class Main {
 		Q = Integer.parseInt(st.nextToken());
 		
 		int size = 1<<N;
-		
 		arr = new int[size][size];
-		
-		
 		
 		for(int i = 0; i<size; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -176,13 +173,11 @@ public class Main {
 				copy_arr[i][j] = arr[i+start_y][j+start_x];
 			}
 		}
-		
+
 		for(int i = 0; i <pivot; i++) {
 			for(int j = 0; j<pivot; j++) {
 				arr[j+start_y][start_x+pivot-i-1] = copy_arr[i][j];
 			}
 		}
-
 	}
-
 }
