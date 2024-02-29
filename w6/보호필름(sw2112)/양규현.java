@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,7 +11,8 @@ public class protection_film {
 	static int W;
 	static int K;
 	static int answer;
-	
+	static boolean[] allT;
+	static boolean[] allF;
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -27,6 +27,11 @@ public class protection_film {
 			W = Integer.parseInt(st.nextToken());
 			K = Integer.parseInt(st.nextToken());
 			answer = Integer.MAX_VALUE;
+			allT = new boolean[W];
+			allF = new boolean[W];
+			
+			Arrays.fill(allF, false);
+			Arrays.fill(allT, true);
 			
 			boolean[][] film  = new boolean[D][W];
 			
@@ -45,8 +50,11 @@ public class protection_film {
 	
 	static void bt(boolean[][] film,int depth,boolean visited[],int start) {
 
-		if(depth > K || depth >= answer)
+		if(depth == K || depth >= answer) {
+			if(answer > depth)
+				answer = depth;
 			return;
+		}
 		
 		if(check(film)) {
 			answer = Math.min(depth, answer);
@@ -54,28 +62,21 @@ public class protection_film {
 		}
 		
 		
-		
-		boolean[] layer = new boolean[W];
-		
 		//시간초과나서 탐색 시작부분을 조절함 
 		for(int i = start; i<D; i++) {
 
 			if(!visited[i]) {
-				//백트래킹을 위한 저장
-				for(int j = 0; j<W; j++) {
-					layer[j] = film[i][j];
-				}
+				//알고리즘의 신 "이유승" 배열 참조 
+				boolean[] original = film[i];
 				visited[i] =true;
-				Arrays.fill(film[i], true);
+				film[i] = allT;
 				bt(film,depth+1,visited,i);
-				Arrays.fill(film[i], false);
+				film[i] = allF;
 				bt(film,depth+1,visited,i);
-				visited[i] =false;
-
 				//백트래킹을 위한 복구
-				for(int j = 0; j<W; j++) {
-					film[i][j] = layer[j];
-				}
+				film[i] = original;
+				visited[i] =false;
+				
 			}
 		}
 	}
