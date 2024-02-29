@@ -66,7 +66,7 @@ public class protection_film {
 		for(int i = start; i<D; i++) {
 
 			if(!visited[i]) {
-				//알고리즘의 신 "이유승" 배열 참조 
+				//알고리즘의 신 "이유승"의 배열 참조 
 				boolean[] original = film[i];
 				visited[i] =true;
 				film[i] = allT;
